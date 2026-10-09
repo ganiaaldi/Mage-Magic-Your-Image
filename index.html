@@ -1,1 +1,61 @@
-halo
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mage - Background Remover</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Mage</div>
+        <div class="subtitle-small">Mage Your Image</div>
+    </header>
+
+    <main>
+        <div class="app-container brutal-border brutal-shadow">
+            <h1 class="text-center">Hapus Background</h1>
+            <p class="description text-center">100% Otomatis dan Berjalan di Browser Kamu.</p>
+            
+            <!-- Upload View -->
+            <div id="upload-view" class="view-section active">
+                <div id="drop-zone" class="drop-zone brutal-border brutal-shadow">
+                    <p>Seret gambar ke sini atau</p>
+                    <label for="file-input" class="btn btn-primary brutal-border brutal-shadow">Pilih Gambar</label>
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                </div>
+            </div>
+
+            <!-- Loading View -->
+            <div id="loading-view" class="view-section hidden text-center">
+                <div class="loader brutal-border"></div>
+                <p id="loading-text" class="loading-text">Sedang memproses keajaiban...</p>
+            </div>
+
+            <!-- Result View -->
+            <div id="result-view" class="view-section hidden">
+                <div class="result-grid">
+                    <div class="image-box brutal-border brutal-shadow">
+                        <p class="image-label">Original</p>
+                        <img id="original-preview" src="" alt="Original Image">
+                    </div>
+                    <div class="image-box brutal-border brutal-shadow">
+                        <p class="image-label">Hasil</p>
+                        <img id="result-preview" src="" alt="Result Image">
+                    </div>
+                </div>
+                <div class="action-bar text-center mt-4">
+                    <button id="btn-download" class="btn btn-primary brutal-border brutal-shadow">Download Hasil</button>
+                    <button id="btn-reset" class="btn brutal-border brutal-shadow">Coba Lagi</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Mage - Mage Your Image. Semua proses aman di browser.</p>
+    </footer>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
