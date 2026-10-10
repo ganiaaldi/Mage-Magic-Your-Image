@@ -8,14 +8,19 @@ export class BackgroundRemover {
             const config = {
                 progress: (key, current, total) => {
                     if (progressCallback) {
-                        const percent = Math.round((current / total) * 100);
-                        // Translate the downloading message to Indonesian for the user
-                        const label = key.includes('fetch') ? 'Mengunduh model' : 'Memproses';
-                        progressCallback(`${label}... ${percent}%`);
+                        // Tahap download memiliki persentase yang akurat
+                        if (key.includes('fetch')) {
+                            const percent = Math.round((current / total) * 100);
+                            progressCallback(`Mengunduh model AI... ${percent}%`);
+                        } else {
+                            // Tahap komputasi AI angkanya melompat (0 -> 75 -> 100)
+                            // Menyembunyikan angkanya agar user tidak merasa nge-bug/stuck
+                            progressCallback(`Menganalisis gambar menggunakan AI (tahan ya, ini butuh beberapa detik)...`);
+                        }
                     }
                 }
             };
-            
+
             // Remove background
             const blob = await removeBackground(imageFile, config);
             return blob;

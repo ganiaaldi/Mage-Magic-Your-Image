@@ -1,11 +1,16 @@
 // main.js - Coordinates between UI and Logic (Presenter Layer)
 import { UI } from './ui.js';
 import { BackgroundRemover } from './remover.js';
+import { ImageEditor } from './editor.js';
 
 class App {
     constructor() {
         this.ui = new UI();
         this.remover = new BackgroundRemover();
+        
+        // Initialize Editor
+        this.editor = new ImageEditor(this.ui.canvas, this.ui.brushCursor);
+        this.editor.onBrushSizeChange = (size) => this.ui.updateBrushDisplay(size);
         
         this.currentFile = null;
         this.originalUrl = null;
@@ -20,6 +25,40 @@ class App {
         const dropZone = document.getElementById('drop-zone');
         const btnReset = document.getElementById('btn-reset');
         const btnDownload = document.getElementById('btn-download');
+
+        // Editor Tools Toggle
+        this.ui.btnMagicBrush.addEventListener('click', () => {
+            const isActive = this.ui.toggleMagicBrush();
+            this.editor.isActive = isActive;
+            
+            // Toggle active style for the magic brush button itself
+            if (isActive) {
+                this.ui.btnMagicBrush.style.backgroundColor = 'var(--charcoal)';
+                this.ui.btnMagicBrush.style.color = 'var(--pure-white)';
+            } else {
+                this.ui.btnMagicBrush.style.backgroundColor = '#fca311';
+                this.ui.btnMagicBrush.style.color = 'var(--charcoal)';
+                this.ui.brushCursor.style.display = 'none'; // hide cursor when deactivated
+            }
+        });
+
+        // Editor Tool Modes
+        this.ui.btnModeErase.addEventListener('click', () => {
+            this.editor.setMode('erase');
+            this.ui.setModeButton('erase');
+        });
+        
+        this.ui.btnModeRestore.addEventListener('click', () => {
+            this.editor.setMode('restore');
+            this.ui.setModeButton('restore');
+        });
+
+        // Brush Size Slider
+        this.ui.brushSizeSlider.addEventListener('input', (e) => {
+            const size = parseInt(e.target.value);
+            this.editor.brushSize = size;
+            this.editor.updateCursorSize();
+        });
 
         // Keyboard accessibility for dropzone
         dropZone.addEventListener('keypress', (e) => {
@@ -66,10 +105,8 @@ class App {
         });
 
         // Download
-        btnDownload.addEventListener('click', () => {
-            if (this.resultUrl) {
-                this.downloadResult();
-            }
+        btnDownload.addEventListener('click', async () => {
+            await this.downloadResult();
         });
     }
 
@@ -85,7 +122,15 @@ class App {
             });
             
             this.resultUrl = URL.createObjectURL(this.resultBlob);
-            this.ui.showResult(this.originalUrl, this.resultUrl);
+            
+            // Setup editor
+            await this.editor.initImages(this.originalUrl, this.resultUrl);
+            
+            this.ui.showResult(this.originalUrl);
+            
+            // Set default mode
+            this.editor.setMode('erase');
+            this.ui.setModeButton('erase');
             
         } catch (error) {
             alert(error.message);
@@ -93,7 +138,11 @@ class App {
         }
     }
 
-    downloadResult() {
+    async downloadResult() {
+        // Get the final blob from the canvas
+        const editedBlob = await this.editor.getBlob();
+        const blobUrl = URL.createObjectURL(editedBlob);
+        
         // Required format: Mage_[Original File Name]
         const originalName = this.currentFile.name;
         // Strip the extension to replace it with .png
@@ -101,11 +150,13 @@ class App {
         const newFileName = `Mage_${nameWithoutExt}.png`;
 
         const a = document.createElement('a');
-        a.href = this.resultUrl;
+        a.href = blobUrl;
         a.download = newFileName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        
+        URL.revokeObjectURL(blobUrl);
     }
 
     cleanupUrls() {

@@ -42,14 +42,33 @@
                         <p class="image-label">Original</p>
                         <img id="original-preview" src="" alt="Original Image">
                     </div>
-                    <div class="image-box brutal-border brutal-shadow">
-                        <p class="image-label">Hasil</p>
-                        <img id="result-preview" src="" alt="Result Image">
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div class="image-box brutal-border brutal-shadow" id="canvas-container" style="display:block; flex: 1;">
+                            <p class="image-label">Hasil (Edit)</p>
+                            <canvas id="editor-canvas" style="width: 100%; height: auto; touch-action: none; display: block;"></canvas>
+                            <div id="brush-cursor"></div>
+                        </div>
+                        
+                        <!-- Magic Brush Tools Panel (Hidden initially) -->
+                        <div id="magic-brush-tools" class="hidden">
+                            <button id="btn-mode-restore" class="btn btn-icon active" title="Restore Bagian (+)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                            <button id="btn-mode-erase" class="btn btn-icon" title="Hapus Bagian (-)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                            <div class="slider-container">
+                                <label for="brush-size-slider" style="font-size: 0.75rem; font-weight: 900;">SIZE</label>
+                                <input type="range" id="brush-size-slider" min="10" max="200" value="40" orient="vertical">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="action-bar text-center mt-4">
-                    <button id="btn-download" class="btn btn-primary brutal-border brutal-shadow">Download Hasil</button>
+                
+                <div class="action-bar text-center mt-4" style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
                     <button id="btn-reset" class="btn brutal-border brutal-shadow">Coba Lagi</button>
+                    <button id="btn-magic-brush" class="btn brutal-border brutal-shadow" style="background-color: #fca311; color: var(--charcoal);">Magic Brush</button>
+                    <button id="btn-download" class="btn btn-primary brutal-border brutal-shadow">Download Hasil</button>
                 </div>
             </div>
         </div>
